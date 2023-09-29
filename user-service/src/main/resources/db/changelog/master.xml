@@ -5,5 +5,5 @@
     <include file="/db/changelog/migration/V1_00__CREATE-TABLE-USERS.sql" />
     <include file="/db/changelog/migration/V1_01__CREATE-TABLE-ROLE.sql" />
     <include file="/db/changelog/migration/V1_02__CREATE-TABLE-USERS_ROLES.sql" />
-
+    <include file="/db/changelog/migration/V1_03__ALTER-TABLE-ROLE-AND-INSERT-DATA.sql" />
 </databaseChangeLog>

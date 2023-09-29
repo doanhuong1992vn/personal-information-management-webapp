@@ -1,6 +1,7 @@
 package com.user_service.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -16,7 +17,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -33,14 +34,16 @@ public class User {
 
     private LocalDate birthday;
 
-    private LocalDateTime create_time;
+    @Column(name = "CREATE_TIME")
+    private LocalDateTime createTime;
 
-    private LocalDateTime last_login;
+    @Column(name = "LAST_LOGIN")
+    private LocalDateTime lastLogin;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "USERS_ROLES",
             joinColumns = @JoinColumn(name = "USERNAME"),
             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    private ArrayList<Role> roles;
+    private Set<Role> roles;
 
 }
