@@ -80,7 +80,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException ex) {
             logger.error("Expired JWT token");
             String username = extractUsername(bearerToken);
-            JwtTokenHolder.getInstance().removeBearerToken(username, token);
+            UserContextHolder.getInstance().removeBearerToken(username, token);
         } catch (UnsupportedJwtException ex) {
             logger.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {

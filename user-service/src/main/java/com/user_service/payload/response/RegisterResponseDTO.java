@@ -5,6 +5,6 @@ import java.time.LocalDate;
 
 public record RegisterResponseDTO (
         String username,
-        LocalDate birthday
+        String birthday
 ) {
 }

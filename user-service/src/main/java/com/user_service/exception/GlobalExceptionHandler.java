@@ -1,47 +1,90 @@
 package com.user_service.exception;
 
+import com.user_service.utils.MessageUtils;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
+
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger logger = LogManager.getLogger();
 
+    private final MessageUtils messageUtils;
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleAllException(Exception ex) {
+
+    @ExceptionHandler(CustomValidationException.class)
+    public ResponseEntity<CommonError> handleCustomViolationException(CustomValidationException ex) {
         logger.error(ex.getMessage());
-        ErrorDetails errorDetails = new ErrorDetails("An exception occurred during request processing", ex.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        List<ErrorDetails> errorDetails = ex.getErrors()
+                .parallelStream()
+                .map(error -> new ErrorDetails(error.getField(), error.getRejectedValue(), error.getDefaultMessage()))
+                .toList();
+        CommonError commonError = new CommonError(ex.getMessage(), errorDetails);
+        return new ResponseEntity<>(commonError, HttpStatus.BAD_REQUEST);
     }
 
+
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
+    public ResponseEntity<CommonError> handleConstraintViolationException(ConstraintViolationException ex) {
         logger.error(ex.getMessage());
-        ErrorDetails errorDetails = new ErrorDetails("Invalid input data. Validation failed", ex.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        List<ErrorDetails> errorDetails = ex.getConstraintViolations()
+                .parallelStream()
+                .map(error -> new ErrorDetails(
+                        error.getPropertyPath().toString(), error.getInvalidValue(), error.getMessage()))
+                .toList();
+        CommonError commonError = new CommonError(ex.getMessage(), errorDetails);
+        return new ResponseEntity<>(commonError, HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<CommonError> handleDuplicateFieldUserException(DuplicateUsernameException ex) {
+        logger.error(ex.getMessage());
+        CommonError commonError = new CommonError(
+                messageUtils.getMessage("Error.user.register.duplication"), ex.getMessage()
+        );
+        return new ResponseEntity<>(commonError, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<CommonError> handleBadCredentialsException(BadCredentialsException ex) {
+        logger.error(ex.getMessage());
+        CommonError commonError = new CommonError(
+                messageUtils.getMessage("Error.user.login"),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(commonError, HttpStatus.UNAUTHORIZED);
     }
 
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<CommonError> handleIllegalArgumentException(IllegalArgumentException ex) {
         logger.error(ex.getMessage());
-        ErrorDetails errorDetails = new ErrorDetails("Invalid input data", ex.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNPROCESSABLE_ENTITY);
+        CommonError commonError = new CommonError(messageUtils.getMessage("Error.argument"), ex.getMessage());
+        return new ResponseEntity<>(commonError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
 
-    @ExceptionHandler(DuplicateUsernameException.class)
-    public ResponseEntity<?> handleDuplicateFieldUserException(DuplicateUsernameException ex) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CommonError> handleAllException(Exception ex) {
         logger.error(ex.getMessage());
-        ErrorDetails errorDetails = new ErrorDetails("User data is duplicated", ex.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNPROCESSABLE_ENTITY);
+        CommonError commonError = new CommonError(messageUtils.getMessage("Error.exception"), ex.getMessage());
+        return new ResponseEntity<>(commonError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 
 }

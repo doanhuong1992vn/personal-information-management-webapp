@@ -21,7 +21,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
 
-    private final JwtTokenHolder tokenHolder = JwtTokenHolder.getInstance();
+    private final UserContextHolder userContextHolder = UserContextHolder.getInstance();
 
     @Override
     protected void doFilterInternal(
@@ -34,8 +34,8 @@ public class JwtFilter extends OncePerRequestFilter {
             if (bearerToken != null && tokenProvider.isValidToken(bearerToken)) {
                 String username = tokenProvider.extractUsername(bearerToken);
                 String token = tokenProvider.getJwtFromBearerToken(bearerToken);
-                if (tokenHolder.isValidLoggedUser(username, token)) {
-                    UserDetails userDetails = tokenHolder.getUserDetails(username);
+                if (userContextHolder.isValidLoggedUser(username, token)) {
+                    UserDetails userDetails = userContextHolder.getUserDetails(username);
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,

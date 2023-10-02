@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final JwtTokenHolder tokenHolder = JwtTokenHolder.getInstance();
+    private final UserContextHolder userContextHolder = UserContextHolder.getInstance();
 
     private final UserRepository userRepository;
 
@@ -33,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 username,
                 user.getPassword(),
                 grantedAuthorities);
-        tokenHolder.saveUserDetails(userDetails);
+        userContextHolder.saveUserDetails(userDetails);
         return userDetails;
     }
 

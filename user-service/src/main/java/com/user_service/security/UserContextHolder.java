@@ -7,16 +7,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class JwtTokenHolder {
+public class UserContextHolder {
     private static final HashMap<String, UserDetailsHolder> loggedUsersHolder = new HashMap<>();
 
-    private static final JwtTokenHolder tokenHolder = new JwtTokenHolder();
+    private static final UserContextHolder userContextHolder = new UserContextHolder();
 
-    private JwtTokenHolder() {
+    private UserContextHolder() {
     }
 
-    public static JwtTokenHolder getInstance() {
-        return tokenHolder;
+    public static UserContextHolder getInstance() {
+        return userContextHolder;
     }
 
     public boolean removeBearerToken(String username, String token) {
@@ -32,7 +32,7 @@ public class JwtTokenHolder {
     }
 
 
-    public void saveBearerToken(String username, String token) {
+    public void saveToken(String username, String token) {
         if (loggedUsersHolder.containsKey(username)) {
             UserDetailsHolder userDetailsHolder = loggedUsersHolder.get(username);
             Set<String> loggedTokensMemory = userDetailsHolder.loggedTokensMemory();
