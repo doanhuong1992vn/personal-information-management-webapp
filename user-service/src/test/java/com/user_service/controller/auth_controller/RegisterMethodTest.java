@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.user_service.UserServiceApplication;
-import com.user_service.controller.utils.ErrorDetailsDTO;
-import com.user_service.controller.utils.TestUtils;
+import com.user_service.controller.dto.ErrorDetailsDTO;
+import com.user_service.controller.utils.AuthTestUtils;
 import com.user_service.exception.CommonError;
 import com.user_service.formater.TimeFormatter;
 import com.user_service.payload.response.CommonResponseDTO;
@@ -41,7 +41,7 @@ public class RegisterMethodTest {
     private TimeFormatter timeFormatter;
 
     @Autowired
-    private TestUtils testUtils;
+    private AuthTestUtils authTestUtils;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -56,7 +56,7 @@ public class RegisterMethodTest {
         String username = "testSuccess1";
         String password = "Glsoft@123";
         LocalDate birthday = LocalDate.parse("1992-02-18");
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password, birthday);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password, birthday);
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         CommonResponseDTO mockBody = new CommonResponseDTO(
                 true,
@@ -74,8 +74,8 @@ public class RegisterMethodTest {
     void testRegister_whenThrowDuplicateUsernameException() throws JSONException, JsonProcessingException {
         String username = "duplicate";
         String password = "Glsoft@123";
-        testUtils.executeRegister(port, username, password);
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        authTestUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
         CommonError mockBody = new CommonError(false,
                 messageUtils.getMessage("Error.user.register.duplication"),
@@ -91,9 +91,9 @@ public class RegisterMethodTest {
             throws JsonProcessingException, JSONException {
         String username = "";
         String password = "Glsoft@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(
                         new ErrorDetailsDTO("username", username, "Blank.user.username"),
                         new ErrorDetailsDTO("username", username, "Size.user.username"),
@@ -109,9 +109,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byNullUsername()
             throws JsonProcessingException, JSONException {
         String password = "Glsoft@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, null, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, null, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("username", null, "Blank.user.username")),
                 "Error.user.register.validation"
         );
@@ -124,9 +124,9 @@ public class RegisterMethodTest {
             throws JsonProcessingException, JSONException {
         String username = "username@";
         String password = "Glsoft@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("username", username, "Pattern.user.username.regex")),
                 "Error.user.register.validation"
         );
@@ -139,9 +139,9 @@ public class RegisterMethodTest {
             throws JsonProcessingException, JSONException {
         String username = "user";
         String password = "Glsoft@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("username", username, "Size.user.username")),
                 "Error.user.register.validation"
         );
@@ -154,9 +154,9 @@ public class RegisterMethodTest {
             throws JsonProcessingException, JSONException {
         String username = "username12345678901234567890";
         String password = "Glsoft@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("username", username, "Size.user.username")),
                 "Error.user.register.validation"
         );
@@ -168,9 +168,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byEmptyPassword() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(
                         new ErrorDetailsDTO("password", password, "Blank.user.password"),
                         new ErrorDetailsDTO("password", password, "Size.user.password"),
@@ -188,9 +188,9 @@ public class RegisterMethodTest {
     @Test
     void testRegister_whenThrowValidationException_byNullPassword() throws JsonProcessingException, JSONException {
         String username = "username1";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, null);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, null);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", null, "Blank.user.password")),
                 "Error.user.register.validation"
         );
@@ -202,9 +202,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byPasswordLessThan8Characters() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "Abc@12";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", password, "Size.user.password")),
                 "Error.user.register.validation"
         );
@@ -216,9 +216,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byPasswordMoreThan20Characters() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "Glsoft@12345678901234567890";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", password, "Size.user.password")),
                 "Error.user.register.validation"
         );
@@ -230,9 +230,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byPasswordNotContainSpecialCharacter() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "Glsoft123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", password, "Pattern.user.password.special-characters")),
                 "Error.user.register.validation"
         );
@@ -244,9 +244,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byPasswordNotContainNumber() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "Glsoft@#$%";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", password, "Pattern.user.password.number")),
                 "Error.user.register.validation"
         );
@@ -258,9 +258,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byPasswordNotContainUppercaseLetters() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "glsoft@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", password, "Pattern.user.password.uppercase-letters")),
                 "Error.user.register.validation"
         );
@@ -272,9 +272,9 @@ public class RegisterMethodTest {
     void testRegister_whenThrowValidationException_byPasswordNotContainLowercaseLetters() throws JsonProcessingException, JSONException {
         String username = "username1";
         String password = "GLSOFT@123";
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("password", password, "Pattern.user.password.lowercase-letters")),
                 "Error.user.register.validation"
         );
@@ -287,9 +287,9 @@ public class RegisterMethodTest {
         String username = "username1";
         String password = "Glsoft@123";
         LocalDate birthday = LocalDate.now().plusDays(1);
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password, birthday);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password, birthday);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("birthday", birthday.toString(), "Past.user.birthday")),
                 "Error.user.register.validation"
         );
@@ -302,9 +302,9 @@ public class RegisterMethodTest {
         String username = "username1";
         String password = "Glsoft@123";
         LocalDate birthday = LocalDate.now().minusYears(101);
-        ResponseEntity<String> response = testUtils.executeRegister(port, username, password, birthday);
+        ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password, birthday);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        String expected = testUtils.mockConstraintValidationBody(
+        String expected = authTestUtils.mockBodyWhenValidationException(
                 List.of(new ErrorDetailsDTO("birthday", birthday.toString(), "TooOld.user.birthday")),
                 "Error.user.register.validation"
         );

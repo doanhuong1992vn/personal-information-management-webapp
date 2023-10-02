@@ -62,10 +62,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<CommonError> handleBadCredentialsException(BadCredentialsException ex) {
         logger.error(ex.getMessage());
-        CommonError commonError = new CommonError(
-                messageUtils.getMessage("Error.user.login"),
-                ex.getMessage()
-        );
+        CommonError commonError = new CommonError(messageUtils.getMessage("Error.user.login"), ex.getMessage());
+        return new ResponseEntity<>(commonError, HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<CommonError> handleInvalidTokenException(InvalidTokenException ex) {
+        logger.error(ex.getMessage());
+        CommonError commonError = new CommonError(messageUtils.getMessage("Error.invalid.token"), ex.getMessage());
         return new ResponseEntity<>(commonError, HttpStatus.UNAUTHORIZED);
     }
 

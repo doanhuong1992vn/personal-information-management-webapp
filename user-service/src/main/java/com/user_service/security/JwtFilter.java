@@ -1,5 +1,6 @@
 package com.user_service.security;
 
+import com.user_service.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context");
             logger.error(ex.getMessage());
-            return;
+            throw new InvalidTokenException(ex.getMessage());
         }
         filterChain.doFilter(request, response);
     }

@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -151,7 +150,7 @@ public class AuthController {
             );
         } else {
             return new ResponseEntity<>(
-                    new CommonResponseDTO(false, messageUtils.getMessage("Error.user.logout"), null),
+                    new CommonResponseDTO(false, messageUtils.getMessage("Error.invalid.token"), null),
                     HttpStatus.BAD_REQUEST
             );
         }

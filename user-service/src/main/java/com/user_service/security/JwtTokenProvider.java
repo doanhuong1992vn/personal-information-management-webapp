@@ -1,5 +1,6 @@
 package com.user_service.security;
 
+import com.user_service.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -30,7 +31,7 @@ public class JwtTokenProvider {
     @Value("${app.jwtExpirationInMs}")
     private Long jwtExpirationInMs;
 
-    private SecretKey getSecretKey() {
+    public SecretKey getSecretKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
@@ -68,25 +69,20 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean isValidToken(String bearerToken) {
+    public boolean isValidToken(String bearerToken) throws InvalidTokenException {
         String token = getJwtFromBearerToken(bearerToken);
         try {
             Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
             return true;
-        } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
+            logger.error(ex.getMessage());
             String username = extractUsername(bearerToken);
             UserContextHolder.getInstance().removeBearerToken(username, token);
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+            throw new InvalidTokenException("Jwt Token has expired. Please log in again!");
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return false;
         }
-        return false;
     }
 
 }
