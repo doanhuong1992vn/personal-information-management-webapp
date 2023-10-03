@@ -2,8 +2,8 @@ package com.user_service.controller.auth_controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.user_service.UserServiceApplication;
-import com.user_service.controller.utils.AuthTestUtils;
-import com.user_service.utils.MessageUtils;
+import com.user_service.utils.AuthTestUtils;
+import com.user_service.utils.UserTestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
@@ -20,17 +20,22 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = UserServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LogoutMethodTest {
+public class LogoutApiTest {
     @LocalServerPort
     int port;
 
     @Autowired
     private AuthTestUtils authTestUtils;
 
+    @Autowired
+    private UserTestUtils userTestUtils;
+
 
     @Test
     void testLogout_whenSuccess() throws JsonProcessingException, JSONException {
-        String token = authTestUtils.getTokenAfterLogin(port);
+        String username = userTestUtils.generateUsername();
+        String password = userTestUtils.generatePassword();
+        String token = authTestUtils.getTokenAfterLogin(port, username, password);
         HttpHeaders headers = authTestUtils.getAuthorizationHeader(token);
         ResponseEntity<String> response =  authTestUtils.executeLogout(port, headers);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -51,8 +56,8 @@ public class LogoutMethodTest {
 
     @Test
     void testLogout_whenFail_byExpiredToken() {
-        String username = "expiredToken";
-        String password = "Glsoft@123";
+        String username = userTestUtils.generateUsername();
+        String password = userTestUtils.generatePassword();
         authTestUtils.executeRegister(port, username, password);
         String expiredToken = authTestUtils.generateExpiredTokenByUsername(username);
         HttpHeaders headers = authTestUtils.getAuthorizationHeader(expiredToken);
