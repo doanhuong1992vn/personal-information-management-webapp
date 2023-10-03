@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
     public RegisterResponseDTO register(RegisterRequestDTO requestDTO) throws DuplicateUsernameException, CustomValidationException {
         String username = requestDTO.username();
         if (userRepository.existsById(username)) {
-            throw new DuplicateUsernameException(messageSrc.getMessage("Error.user.username.exists", username));
+            throw new DuplicateUsernameException(messageSrc.getMessage("Exists.username.true", username));
         } else {
             User user = userConverter.convertRegisterRequestToEntity(requestDTO);
             validateBirthday(user.getBirthday());
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponseDTO update(String username, UserRequestDTO requestDTO)
+    public UserResponseDTO updatePassword(String username, UserRequestDTO requestDTO)
             throws AuthenticationException, CustomValidationException {
         User user = checkCurrentUser(username);
         validateBirthday(requestDTO.birthday());
@@ -157,8 +157,9 @@ public class UserServiceImpl implements UserService {
         return userConverter.convertEntityToResponseDTO(result);
     }
 
+
     @Override
-    public boolean update(String username, PasswordRequestDTO requestDTO) throws AuthenticationException {
+    public boolean updatePassword(String username, PasswordRequestDTO requestDTO) throws AuthenticationException {
         User user = checkCurrentUser(username);
         if (passwordEncoder.matches(requestDTO.oldPassword(), user.getPassword())) {
             user.setPassword(hashPassword(requestDTO.newPassword()));
@@ -167,6 +168,13 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsById(username);
+    }
+
 
     private String hashPassword(String password) {
         return passwordEncoder.encode(password);
@@ -182,6 +190,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails details = (UserDetails) authentication.getPrincipal();

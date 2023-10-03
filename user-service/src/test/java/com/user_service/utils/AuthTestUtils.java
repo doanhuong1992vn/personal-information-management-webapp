@@ -19,11 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -57,11 +53,8 @@ public class AuthTestUtils {
 
 
     public ResponseEntity<String> executeRegister(int port, String username, String password, LocalDate birthday) {
-        TestRestTemplate restTemplate = new TestRestTemplate();
-        HttpHeaders headers = new HttpHeaders();
         RegisterRequestDTO body = new RegisterRequestDTO(username, password, birthday);
-        HttpEntity<RegisterRequestDTO> entity = new HttpEntity<>(body, headers);
-        return restTemplate.exchange(ApiUtils.registerURL(port), HttpMethod.POST, entity, String.class);
+        return ApiUtils.execute(ApiUtils.registerURL(port), HttpMethod.POST, body);
     }
 
 
@@ -72,26 +65,13 @@ public class AuthTestUtils {
 
 
     public ResponseEntity<String> executeLoginByTestRestTemplate(int port, String username, String password) {
-        TestRestTemplate restTemplate = new TestRestTemplate();
-        HttpHeaders headers = new HttpHeaders();
         LoginRequestDTO body = new LoginRequestDTO(username, password);
-        HttpEntity<LoginRequestDTO> entity = new HttpEntity<>(body, headers);
-        return restTemplate.exchange(ApiUtils.loginURL(port), HttpMethod.POST, entity, String.class);
+        return ApiUtils.execute(ApiUtils.loginURL(port), HttpMethod.POST, body);
     }
 
 
-    public ResponseEntity<String> executeLogout(int port, HttpHeaders headers) {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        TestRestTemplate restTemplate = new TestRestTemplate();
-        return restTemplate.exchange(ApiUtils.logoutURL(port), HttpMethod.POST, entity, String.class);
-    }
-
-
-    public HttpHeaders getAuthorizationHeader(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + token);
-        return headers;
+    public ResponseEntity<String> executeLogout(int port, String token) {
+        return ApiUtils.execute(ApiUtils.logoutURL(port), HttpMethod.POST, token, null);
     }
 
 

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +35,7 @@ public class GetInformationApiTest {
         String username = userTestUtils.generateUsername();
         String password = userTestUtils.generatePassword();
         String token = authTestUtils.getTokenAfterLogin(port, username, password);
-        HttpHeaders headers = authTestUtils.getAuthorizationHeader(token);
-        ResponseEntity<String> response = userTestUtils.executeUserAPI(port, username, HttpMethod.GET, headers, null);
+        ResponseEntity<String> response = userTestUtils.executeUserAPI(port, username, HttpMethod.GET, token, null);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
         LinkedHashMap<String, String> data = authTestUtils.getResponseData(response);
@@ -56,8 +54,7 @@ public class GetInformationApiTest {
         String username = userTestUtils.generateUsername();
         String password = userTestUtils.generatePassword();
         String token = authTestUtils.getTokenAfterLogin(port, username, password);
-        HttpHeaders headers = authTestUtils.getAuthorizationHeader(token);
-        ResponseEntity<String> response = userTestUtils.executeUserAPI(port, usernameOfOther, HttpMethod.GET, headers, null);
+        ResponseEntity<String> response = userTestUtils.executeUserAPI(port, usernameOfOther, HttpMethod.GET, token, null);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
     }

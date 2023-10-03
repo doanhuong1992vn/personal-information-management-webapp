@@ -20,7 +20,9 @@ public interface UserService {
 
     UserResponseDTO getInformation(String username) throws AuthenticationException;
 
-    UserResponseDTO update(String username, UserRequestDTO requestDTO) throws AuthenticationException, CustomValidationException;
+    UserResponseDTO updatePassword(String username, UserRequestDTO requestDTO) throws AuthenticationException, CustomValidationException;
 
-    boolean update(String username, PasswordRequestDTO requestDTO) throws AuthenticationException;
+    boolean updatePassword(String username, PasswordRequestDTO requestDTO) throws AuthenticationException;
+
+    boolean existsByUsername(String username);
 }

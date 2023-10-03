@@ -55,7 +55,7 @@ public class UserController {
                     errors.getFieldErrors()
             );
         }
-        UserResponseDTO userResponseDTO = userService.update(username, requestDTO);
+        UserResponseDTO userResponseDTO = userService.updatePassword(username, requestDTO);
         CommonResponseDTO body = new CommonResponseDTO(
                 true, messageSrc.getMessage("Success.user.update"), userResponseDTO
         );
@@ -75,7 +75,7 @@ public class UserController {
                     errors.getFieldErrors()
             );
         }
-        return userService.update(username, requestDTO)
+        return userService.updatePassword(username, requestDTO)
                 ? new ResponseEntity<>(
                 new CommonResponseDTO(true, messageSrc.getMessage("Success.user.update"), null),
                 HttpStatus.OK

@@ -78,7 +78,7 @@ public class RegisterApiTest {
         Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
         CommonError mockBody = new CommonError(false,
                 messageSrc.getMessage("Error.user.register.duplication"),
-                messageSrc.getMessage("Error.user.username.exists", username)
+                messageSrc.getMessage("Exists.username.true", username)
         );
         String expected = objectMapper.writeValueAsString(mockBody);
         JSONAssert.assertEquals(expected, response.getBody(), true);

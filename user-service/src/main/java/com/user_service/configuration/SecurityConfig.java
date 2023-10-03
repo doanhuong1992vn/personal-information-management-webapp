@@ -84,6 +84,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers(
                         "/api/auth/login",
                         "/api/auth/register",
+                        "/api/check-username/**",
                         "/docs/**"
                 )
                 .permitAll();

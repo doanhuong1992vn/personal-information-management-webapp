@@ -36,8 +36,7 @@ public class LogoutApiTest {
         String username = userTestUtils.generateUsername();
         String password = userTestUtils.generatePassword();
         String token = authTestUtils.getTokenAfterLogin(port, username, password);
-        HttpHeaders headers = authTestUtils.getAuthorizationHeader(token);
-        ResponseEntity<String> response =  authTestUtils.executeLogout(port, headers);
+        ResponseEntity<String> response =  authTestUtils.executeLogout(port, token);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         String expected = authTestUtils.mockBodyWhenLogoutSuccess();
         JSONAssert.assertEquals(expected, response.getBody(), true);
@@ -47,8 +46,7 @@ public class LogoutApiTest {
     @Test
     void testLogout_whenFail_byInvalidToken() {
         String invalidToken = RandomStringUtils.randomAlphabetic(128, 356);
-        HttpHeaders headers = authTestUtils.getAuthorizationHeader(invalidToken);
-        ResponseEntity<String> response = authTestUtils.executeLogout(port, headers);
+        ResponseEntity<String> response = authTestUtils.executeLogout(port, invalidToken);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         Assertions.assertNull(response.getBody());
     }
@@ -60,8 +58,7 @@ public class LogoutApiTest {
         String password = userTestUtils.generatePassword();
         authTestUtils.executeRegister(port, username, password);
         String expiredToken = authTestUtils.generateExpiredTokenByUsername(username);
-        HttpHeaders headers = authTestUtils.getAuthorizationHeader(expiredToken);
-        ResponseEntity<String> response =  authTestUtils.executeLogout(port, headers);
+        ResponseEntity<String> response =  authTestUtils.executeLogout(port, expiredToken);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         Assertions.assertNull(response.getBody());
     }

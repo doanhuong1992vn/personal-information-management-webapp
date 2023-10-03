@@ -11,4 +11,6 @@ public class API {
     public static final String LOGOUT = "/api/auth/logout";
 
     public static final String USER = "/api/users/";
+
+    public static final String CHECK_USERNAME = "/api/check-username/";
 }
