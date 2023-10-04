@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    
+
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails details = (UserDetails) authentication.getPrincipal();

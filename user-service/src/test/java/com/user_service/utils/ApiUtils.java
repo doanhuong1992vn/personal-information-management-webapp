@@ -21,9 +21,11 @@ import java.net.URI;
 public class ApiUtils {
     public static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
+
     public static String registerURL(int port) {
         return API.HOST + port + API.REGISTER;
     }
+
 
     public static String loginURL(int port) {
         return API.HOST + port + API.LOGIN;
@@ -34,14 +36,15 @@ public class ApiUtils {
         return API.HOST + port + API.LOGOUT;
     }
 
+
     public static String userURL(int port, String username) {
         return API.HOST + port + API.USER + username;
     }
 
+
     public static String checkUsernameURL(int port, String username) {
         return API.HOST + port + API.CHECK_USERNAME + username;
     }
-
 
 
     public static HttpResponse execute(
@@ -57,6 +60,7 @@ public class ApiUtils {
         return httpClient.execute(http);
     }
 
+
     public static ResponseEntity<String> execute(String url, HttpMethod httpMethod, String token, Object body) {
         TestRestTemplate restTemplate = new TestRestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -65,6 +69,7 @@ public class ApiUtils {
         HttpEntity<Object> entity = new HttpEntity<>(body, headers);
         return restTemplate.exchange(url, httpMethod, entity, String.class);
     }
+
 
     public static ResponseEntity<String> execute(String url, HttpMethod httpMethod, Object body) {
         return execute(url, httpMethod, null, body);
