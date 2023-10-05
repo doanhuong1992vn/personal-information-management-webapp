@@ -59,7 +59,7 @@ public class RegisterApiTest {
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         CommonResponseDTO mockBody = new CommonResponseDTO(
                 true,
-                messageSrc.getMessage("Success.user.register"),
+                messageSrc.getMessage("Success.user.register", username),
                 new RegisterResponseDTO(username, timeFormatter.format(birthday))
         );
         String expected = objectMapper.writeValueAsString(mockBody);
@@ -136,7 +136,7 @@ public class RegisterApiTest {
     @Test
     void testRegister_whenThrowValidationException_byUsernameLessThan8Characters()
             throws JsonProcessingException, JSONException {
-        String username = RandomStringUtils.randomAlphanumeric(1, 7);
+        String username = RandomStringUtils.randomAlphanumeric(2, 7);
         String password = userTestUtils.generatePassword();
         ResponseEntity<String> response = authTestUtils.executeRegister(port, username, password);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

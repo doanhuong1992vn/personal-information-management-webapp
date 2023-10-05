@@ -11,7 +11,7 @@ public record PasswordRequestDTO(
         @Pattern(regexp = "^(?=.*\\d).{2,}$", message = "{Pattern.user.password.number}")
         @Pattern(regexp = "^(?=.*[A-Z]).{2,}$", message = "{Pattern.user.password.uppercase-letters}")
         @Pattern(regexp = "^(?=.*[a-z]).{2,}$", message = "{Pattern.user.password.lowercase-letters}")
-        String oldPassword,
+        String currentPassword,
 
         @NotBlank(message = "{Blank.user.password}")
         @Size(min = 8, max = 20, message = "{Size.user.password}")

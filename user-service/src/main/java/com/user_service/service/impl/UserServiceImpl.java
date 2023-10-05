@@ -5,6 +5,7 @@ import com.user_service.entity.Role;
 import com.user_service.entity.User;
 import com.user_service.exception.CustomValidationException;
 import com.user_service.exception.DuplicateUsernameException;
+import com.user_service.formater.TimeFormatter;
 import com.user_service.payload.request.LoginRequestDTO;
 import com.user_service.payload.request.PasswordRequestDTO;
 import com.user_service.payload.request.RegisterRequestDTO;
@@ -56,6 +57,8 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private final TimeFormatter timeFormatter;
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private final UserContextHolder userContextHolder = UserContextHolder.getInstance();
@@ -79,7 +82,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user);
             });
             saveCurrentLogin.start();
-            return new LoginResponseDTO(username, token, lastLogin);
+            return new LoginResponseDTO(username, token, timeFormatter.format(lastLogin));
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException(messageSrc.getMessage("Error.user.login.field"));
         } catch (Exception e) {
@@ -161,7 +164,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updatePassword(String username, PasswordRequestDTO requestDTO) throws AuthenticationException {
         User user = checkCurrentUser(username);
-        if (passwordEncoder.matches(requestDTO.oldPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(requestDTO.currentPassword(), user.getPassword())) {
             user.setPassword(hashPassword(requestDTO.newPassword()));
             userRepository.save(user);
             return true;

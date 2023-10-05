@@ -1,37 +1,110 @@
-import {InputText} from "primereact/inputtext";
 import {Button} from "primereact/button";
 import {Divider} from "primereact/divider";
-import {Password} from "primereact/password";
-import {useNavigate} from "react-router-dom";
-import {REGISTER_PAGE} from "../constant/page.js";
+import {useLocation, useNavigate} from "react-router-dom";
+import {HOME_PAGE, REGISTER_PAGE} from "../constant/page.js";
+import {EMPTY_INPUT_ERROR} from "../constant/message.js";
+import {useState} from "react";
+import UsernamePassword from "./UsernamePassword.jsx";
+import {BsInfoCircle} from "react-icons/bs";
+import {login} from "../api/authApi.js";
+import {saveUser} from "../service/userService.js";
+import {getServerErrorMessages} from "../utils/errorUtils.js";
+import ErrorMessages from "./ErrorMessages.jsx";
 
 function LoginForm() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const message = location.state?.message;
+    const [username, setUsername] = useState("");
+    const [usernameError, setUsernameError] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [serverMessages, setServerMessages] = useState([]);
+
+    const handleChangeUsername = (username) => {
+        setUsername(username);
+        checkUsername(username);
+    }
+
+    const checkUsername = (username) => {
+        if (username) {
+            setUsernameError("");
+            return true;
+        }
+        setUsernameError(EMPTY_INPUT_ERROR);
+        return false;
+    }
+
+    const handleChangePassword = (password) => {
+        setPassword(password);
+        checkPassword(password);
+    }
+
+    const checkPassword = (password) => {
+        if (password) {
+            setPasswordError("");
+            return true;
+        }
+        setPasswordError(EMPTY_INPUT_ERROR);
+        return false;
+    }
+
+    const isValidForm = () => {
+        const isValidUsername = checkUsername(username);
+        const isValidPassword = checkPassword(password);
+        return isValidUsername && isValidPassword;
+    }
+
+    const handleClickLogin = async () => {
+        if (isValidForm()) {
+            await login({username, password})
+                .then((response) => {
+                    saveUser(response.data.data);
+                    navigate(HOME_PAGE);
+                })
+                .catch((error) => {
+                    setServerMessages(getServerErrorMessages(error.response.data))
+                });
+        }
+    }
+
+
     return (
         <div className="card container lg:col-8">
             <div className="flex flex-column md:flex-row">
-                <div className="w-full md:w-5 flex flex-column align-items-s justify-content-center gap-3 py-5">
-                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                        <label htmlFor="username" className="w-6rem">Username</label>
-                        <InputText
-                            id="username"
-                            type="text"
-                        />
+                <div className="w-full md:w-6 flex flex-column align-items-s justify-content-center gap-3 py-5">
+                    {
+                        message?.length > 0 &&
+                        <div className="flex justify-content-center align-items-center gap-2 text-success">
+                            <span>{message}</span>
+                        </div>
+                    }
+                    <UsernamePassword
+                        username={username}
+                        password={password}
+                        usernameError={usernameError}
+                        onChangeUsername={handleChangeUsername}
+                        onBlurUsername={handleChangeUsername}
+                        onChangePassword={handleChangePassword}
+                    />
+                    <div className={"flex justify-content-start"}>
+                        <span className={"text-danger"}>
+                            {passwordError ? <BsInfoCircle className={"me-1 mb-1"}/> : <></>}
+                            {passwordError}
+                        </span>
                     </div>
-                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                        <label htmlFor="password" className="w-6rem">Password</label>
-                        <Password
-                            inputId="password"
-                            toggleMask
-                        />
-                    </div>
+                    {
+                        serverMessages.length > 0 &&
+                        <ErrorMessages messages={serverMessages} />
+                    }
                     <Button
                         label="Login"
                         icon="pi pi-sign-in"
                         className="w-10rem mx-auto border-round mt-3"
+                        onClick={handleClickLogin}
                     />
                 </div>
-                <div className="w-full md:w-2">
+                <div className="w-full md:w-1">
                     <Divider layout="vertical" className="hidden md:flex"><b>OR</b></Divider>
                     <Divider layout="horizontal" className="flex md:hidden" align="center"><b>OR</b></Divider>
                 </div>

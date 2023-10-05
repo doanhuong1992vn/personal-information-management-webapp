@@ -45,15 +45,15 @@ public class UpdatePasswordApiTest {
     @Test
     void testUpdate_whenSuccess() throws IOException, JSONException, URISyntaxException {
         String username = userTestUtils.generateUsername();
-        String oldPassword = userTestUtils.generatePassword();
-        String token = authTestUtils.getTokenAfterLogin(port, username, oldPassword);
+        String currentPassword = userTestUtils.generatePassword();
+        String token = authTestUtils.getTokenAfterLogin(port, username, currentPassword);
         String newPassword = userTestUtils.generatePassword();
-        PasswordRequestDTO body = new PasswordRequestDTO(oldPassword, newPassword);
+        PasswordRequestDTO body = new PasswordRequestDTO(currentPassword, newPassword);
         HttpResponse response = ApiUtils.execute(new HttpPatch(), new URI(ApiUtils.userURL(port, username)), token, body);
         Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusLine().getStatusCode());
         String responseBody = EntityUtils.toString(response.getEntity());
         CommonResponseDTO mockBody = new CommonResponseDTO(
-                true, messageSrc.getMessage("Success.user.update"), null
+                true, messageSrc.getMessage("Success.user.password.update"), null
         );
         String expected = new ObjectMapper().writeValueAsString(mockBody);
         JSONAssert.assertEquals(expected, responseBody, true);
@@ -62,8 +62,8 @@ public class UpdatePasswordApiTest {
     @Test
     void testUpdate_whenFail_byWrongOldPassword() throws IOException, JSONException, URISyntaxException {
         String username = userTestUtils.generateUsername();
-        String oldPassword = userTestUtils.generatePassword();
-        String token = authTestUtils.getTokenAfterLogin(port, username, oldPassword);
+        String currentPassword = userTestUtils.generatePassword();
+        String token = authTestUtils.getTokenAfterLogin(port, username, currentPassword);
         String newPassword = userTestUtils.generatePassword();
         PasswordRequestDTO body = new PasswordRequestDTO(newPassword, newPassword);
         HttpResponse response = ApiUtils.execute(new HttpPatch(), new URI(ApiUtils.userURL(port, username)), token, body);

@@ -77,15 +77,13 @@ public class UserController {
         }
         return userService.updatePassword(username, requestDTO)
                 ? new ResponseEntity<>(
-                new CommonResponseDTO(true, messageSrc.getMessage("Success.user.update"), null),
+                new CommonResponseDTO(true, messageSrc.getMessage("Success.user.password.update"), null),
                 HttpStatus.OK
         )
                 : new ResponseEntity<>(
                 new CommonResponseDTO(false, messageSrc.getMessage("Error.user.password.update"), null),
                 HttpStatus.BAD_REQUEST
         );
-
-
     }
 
 }

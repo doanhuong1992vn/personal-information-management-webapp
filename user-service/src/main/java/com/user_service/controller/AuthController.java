@@ -87,7 +87,9 @@ public class AuthController {
         }
         RegisterResponseDTO data = userService.register(requestDTO);
         return new ResponseEntity<>(
-                new CommonResponseDTO(true, messageSrc.getMessage("Success.user.register"), data),
+                new CommonResponseDTO(
+                        true, messageSrc.getMessage("Success.user.register", requestDTO.username()), data
+                ),
                 HttpStatus.CREATED
         );
     }

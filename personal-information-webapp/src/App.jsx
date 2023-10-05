@@ -7,11 +7,13 @@ import RegisterPage from "./page/RegisterPage.jsx";
 function App() {
     return (
         <BrowserRouter>
+            <div className={"d-flex align-items-center min-h-screen"}>
                 <Routes>
                     <Route path={HOME_PAGE} element={<HomePage/>}/>
                     <Route path={LOGIN_PAGE} element={<LoginPage/>}/>
                     <Route path={REGISTER_PAGE} element={<RegisterPage/>}/>
                 </Routes>
+            </div>
         </BrowserRouter>
     )
 }
