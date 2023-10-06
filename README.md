@@ -16,8 +16,9 @@
      - Password: 123
 6. Step 6: After successfully creating server with your name, let create database "liquibase_demo"
 ![step6a.png](docs/img/step6a.png)![step6b.png](docs/img/step6b.png)
-7. Step 7: Standing at the user-service directory of the project, executing the command "./gradlew bootRun" in command-line
+7. Step 7: Standing at the user-service directory of the project, executing the command "./gradlew bootRun" in command-line to run the Spring boot project
 8. Step 8: After successful step 7, you can see API documents has been opened, if not, please access API documents at "http://localhost:8080/docs/swagger-ui/index.html" in your browser.
-9. Step 9: Standing at the personal-information-webapp directory of the project, executing the command "npm run dev" in command-line
-10. Step 10: If you have followed the steps above but are not successful, please contact me at email address "huong.d@webglsoft.com"
+9. Step 9: Standing at the user-service directory of the project, executing the command "./gradlew test" in command-line to run test for the Spring boot project
+10. Step 10: Standing at the personal-information-webapp directory of the project, executing the command "npm run dev" in command-line
+11. Step 11: If you have followed the steps above but are not successful, please contact me at email address "huong.d@webglsoft.com"
 
