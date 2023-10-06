@@ -9,6 +9,7 @@ import {getLastLogin, getUser, removeUser} from "../service/userService.js";
 import {getUserInformation} from "../api/userApi.js";
 import {getServerErrorMessages} from "../utils/errorUtils.js";
 import {logout} from "../api/authApi.js";
+import {CONNECTION_ERROR} from "../constant/message.js";
 
 function HomePage() {
     const navigate = useNavigate();
@@ -27,9 +28,10 @@ function HomePage() {
                     setProfile({username, birthday, createTime, lastLogin});
                 })
                 .catch((error) => {
-                    console.log(error)
                     removeUser();
-                    const messages = getServerErrorMessages(error.response.data).join(" ");
+                    const messages = error.response
+                        ? getServerErrorMessages(error.response.data).join(" ")
+                        : CONNECTION_ERROR;
                     navigate(LOGIN_PAGE, { state: { message: messages + " Please login again!" } });
                 });
         } else {
@@ -43,8 +45,8 @@ function HomePage() {
     }
 
 
-    const handleClickLogout = () => {
-        logout();
+    const handleClickLogout = async () => {
+        await logout();
         removeUser();
         navigate(LOGIN_PAGE);
     }

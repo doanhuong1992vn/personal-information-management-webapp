@@ -3,7 +3,12 @@ import {Button} from "primereact/button";
 import PasswordInstructions from "./PasswordInstructions.jsx";
 import {useState} from "react";
 import {MAX_LENGTH} from "../constant/number.js";
-import {CONFIRM_PWD_NOT_MATCH_NEW_PWD_ERROR, INVALID_LENGTH_ERROR, NEW_PWD_SAME_CURRENT_PWD_ERROR} from "../constant/message.js";
+import {
+    CONFIRM_PWD_NOT_MATCH_NEW_PWD_ERROR,
+    CONNECTION_ERROR,
+    INVALID_LENGTH_ERROR,
+    NEW_PWD_SAME_CURRENT_PWD_ERROR
+} from "../constant/message.js";
 import {
     checkContainsCapitalAndLowerLetter,
     checkContainsSymbolAndNumber,
@@ -78,7 +83,12 @@ function ChangePasswordForm() {
                     setResult(response.data);
                 })
                 .catch(error => {
-                    setResult(error.response.data);
+                    if (error.response) {
+                        setResult(error.response.data);
+                    } else {
+                        setResult({success: false, message: CONNECTION_ERROR})
+                    }
+
                 })
         }
     }
@@ -86,7 +96,7 @@ function ChangePasswordForm() {
     return (
         <div className="card mb-4">
             <div className="card-body">
-                <div className="w-full flex flex-column align-items-s justify-content-center gap-3 py-5">
+                <div className="w-full col-8 flex flex-column align-items-center justify-content-center gap-3 py-5">
                     <div className="flex flex-wrap justify-content-start align-items-center gap-2">
                         <label htmlFor="cur-pwd" className="w-12rem">Current Password</label>
                         <Password
@@ -120,14 +130,6 @@ function ChangePasswordForm() {
                         />
                     </div>
                     {
-                        newPassword.showError &&
-                        <PasswordInstructions
-                            isValidLength={newPassword.isValidLength}
-                            containsSymbolAndNumber={newPassword.containsSymbolAndNumber}
-                            containsCapitalAndLowerLetter={newPassword.containsCapitalAndLowerLetter}
-                        />
-                    }
-                    {
                         (!isDifference || newPassword.showError) &&
                         <div
                             className={`${isDifference ? "text-success" : "text-danger"} flex align-items-center`}>
@@ -136,6 +138,14 @@ function ChangePasswordForm() {
                             </div>
                             <span>{NEW_PWD_SAME_CURRENT_PWD_ERROR}</span>
                         </div>
+                    }
+                    {
+                        newPassword.showError &&
+                        <PasswordInstructions
+                            isValidLength={newPassword.isValidLength}
+                            containsSymbolAndNumber={newPassword.containsSymbolAndNumber}
+                            containsCapitalAndLowerLetter={newPassword.containsCapitalAndLowerLetter}
+                        />
                     }
                     <div className="flex flex-wrap justify-content-start align-items-center gap-2">
                         <label htmlFor="cf-pwd" className="w-12rem">Confirm New Password</label>

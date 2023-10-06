@@ -4,6 +4,10 @@ import com.user_service.payload.response.CheckerResponseDTO;
 import com.user_service.payload.response.CommonResponseDTO;
 import com.user_service.service.UserService;
 import com.user_service.utils.MessageSrc;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +29,17 @@ public class PublicController {
 
     private final MessageSrc messageSrc;
 
+    @Operation(
+            summary = "Check exists by username",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Query successful. Please see the data field for results!",
+                            content = @Content(
+                                    schema = @Schema(implementation = CommonResponseDTO.class)
+                            ))
+            }
+    )
     @GetMapping("/check-username/{username}")
     public ResponseEntity<CommonResponseDTO> checkUsername(@PathVariable String username) {
         return userService.existsByUsername(username)

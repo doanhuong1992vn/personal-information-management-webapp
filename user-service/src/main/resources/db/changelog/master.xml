@@ -7,4 +7,5 @@
     <include file="/db/changelog/migration/V1_02__CREATE-TABLE-USERS_ROLES.sql" />
     <include file="/db/changelog/migration/V1_03__ALTER-TABLE-ROLE-AND-INSERT-DATA.sql" />
     <include file="/db/changelog/migration/V1_04__INSERT-TEST-USER-DATA.sql" />
+    <include file="/db/changelog/migration/V1_05__REMOVE-TEST-USER-AND-INSERT-DEFAULT-ACCOUNT.sql" />
 </databaseChangeLog>

@@ -7,6 +7,7 @@ import {updateProfile} from "../api/userApi.js";
 import {getServerErrorMessages} from "../utils/errorUtils.js";
 import ErrorMessages from "./ErrorMessages.jsx";
 import {formatBirthday, parseBirthday} from "../utils/timeUtils.js";
+import {CONNECTION_ERROR} from "../constant/message.js";
 
 function UserProfile({profile, onUpdateProfile}) {
     const [isEditBirthday, setIsEditBirthday] = useState(false);
@@ -23,7 +24,13 @@ function UserProfile({profile, onUpdateProfile}) {
                     setIsEditBirthday(false);
                     onUpdateProfile(response.data.data);
                 })
-                .catch(error => {setServerMessages(getServerErrorMessages(error.response.data));});
+                .catch(error => {
+                    if (error.response) {
+                        setServerMessages(getServerErrorMessages(error.response.data));
+                    } else {
+                        setServerMessages([CONNECTION_ERROR]);
+                    }
+                });
         }
     }
 
@@ -47,7 +54,7 @@ function UserProfile({profile, onUpdateProfile}) {
 return (
     <div className="card mb-4">
         <div className="card-body">
-            <div className="row">
+            <div className="row align-items-center" style={{minHeight: "3.2rem"}}>
                 <div className="col-sm-3">
                     <p className="mb-0">Username</p>
                 </div>
@@ -56,7 +63,7 @@ return (
                 </div>
             </div>
             <hr/>
-            <div className="row">
+            <div className="row align-items-center" style={{minHeight: "3.2rem"}}>
                 <div className="col-sm-3">
                     <p className="mb-0">Create Time</p>
                 </div>
@@ -65,7 +72,7 @@ return (
                 </div>
             </div>
             <hr/>
-            <div className="row">
+            <div className="row align-items-center" style={{minHeight: "3.2rem"}}>
                 <div className="col-sm-3">
                     <p className="mb-0">Last Login</p>
                 </div>

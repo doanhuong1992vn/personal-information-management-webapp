@@ -14,3 +14,5 @@ export const CONFIRM_PWD_NOT_MATCH_NEW_PWD_ERROR = "Confirm password does not ma
 
 export const CONFIRM_PWD_NOT_MATCH_PWD_ERROR = "Confirm password does not match the password!";
 
+export const CONNECTION_ERROR = "Connection error. Please check your internet connection and try again!"
+

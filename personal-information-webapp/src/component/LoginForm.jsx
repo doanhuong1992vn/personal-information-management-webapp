@@ -2,7 +2,7 @@ import {Button} from "primereact/button";
 import {Divider} from "primereact/divider";
 import {useLocation, useNavigate} from "react-router-dom";
 import {HOME_PAGE, REGISTER_PAGE} from "../constant/page.js";
-import {EMPTY_INPUT_ERROR} from "../constant/message.js";
+import {CONNECTION_ERROR, EMPTY_INPUT_ERROR} from "../constant/message.js";
 import {useState} from "react";
 import UsernamePassword from "./UsernamePassword.jsx";
 import {BsInfoCircle} from "react-icons/bs";
@@ -15,9 +15,9 @@ function LoginForm() {
     const navigate = useNavigate();
     const location = useLocation();
     const message = location.state?.message;
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState("webGLsoft2023");
     const [usernameError, setUsernameError] = useState("");
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState("WebGlsoft@2023");
     const [passwordError, setPasswordError] = useState("");
     const [serverMessages, setServerMessages] = useState([]);
 
@@ -63,14 +63,24 @@ function LoginForm() {
                     navigate(HOME_PAGE);
                 })
                 .catch((error) => {
-                    setServerMessages(getServerErrorMessages(error.response.data))
+                    if (error.response) {
+                        setServerMessages(getServerErrorMessages(error.response.data));
+                    } else {
+                        setServerMessages([CONNECTION_ERROR])
+                    }
                 });
+        }
+    }
+    
+    const handleKeyDown = async (e) => {
+        if (e.key === 'Enter') {
+            await handleClickLogin();
         }
     }
 
 
     return (
-        <div className="card container lg:col-8">
+        <div className="card container lg:col-8" onKeyDown={handleKeyDown} tabIndex="0">
             <div className="flex flex-column md:flex-row">
                 <div className="w-full md:w-6 flex flex-column align-items-s justify-content-center gap-3 py-5">
                     {

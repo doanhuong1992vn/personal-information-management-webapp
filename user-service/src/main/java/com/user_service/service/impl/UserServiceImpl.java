@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponseDTO updatePassword(String username, UserRequestDTO requestDTO)
+    public UserResponseDTO updateProfile(String username, UserRequestDTO requestDTO)
             throws AuthenticationException, CustomValidationException {
         User user = checkCurrentUser(username);
         validateBirthday(requestDTO.birthday());

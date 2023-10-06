@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {LOGIN_PAGE} from "../constant/page.js";
 import {formatBirthday} from "../utils/timeUtils.js";
 import {
-    CONFIRM_PWD_NOT_MATCH_PWD_ERROR,
+    CONFIRM_PWD_NOT_MATCH_PWD_ERROR, CONNECTION_ERROR,
     EMPTY_INPUT_ERROR,
     INVALID_LENGTH_ERROR,
     USERNAME_ERROR
@@ -105,17 +105,25 @@ function RegisterForm() {
                     navigate(LOGIN_PAGE, {state: {message: response.data.message}});
                 })
                 .catch((error) => {
-                    console.log(error)
-                    setServerMessages(getServerErrorMessages(error.response.data));
+                    if (error.response) {
+                        setServerMessages(getServerErrorMessages(error.response.data));
+                    } else {
+                        setServerMessages([CONNECTION_ERROR]);
+                    }
                 });
         } else {
             setShowPasswordError(true);
         }
     }
 
+    const handleKeyDown = async (e) => {
+        if (e.key === 'Enter') {
+            await handleClickRegister();
+        }
+    }
 
     return (
-        <div className="card container lg:col-8">
+        <div className="card container lg:col-8" onKeyDown={handleKeyDown} tabIndex="0">
             <div className="flex flex-column md:flex-row">
                 <div className="w-full md:w-8 flex flex-column align-items-start justify-content-center gap-3 py-5">
                     <UsernamePassword
@@ -134,7 +142,7 @@ function RegisterForm() {
                             containsCapitalAndLowerLetter={containsCapitalAndLowerLetter}
                         />
                     }
-                    <div className="flex flex-wrap justify-content-start align-items-center gap-2">
+                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
                         <label htmlFor="cf-pwd" className="w-12rem">Confirm Password</label>
                         <Password
                             inputId="cf-pwd"

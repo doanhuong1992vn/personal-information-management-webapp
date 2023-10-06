@@ -1,5 +1,6 @@
 package com.user_service.controller;
 
+import com.user_service.exception.CommonError;
 import com.user_service.exception.CustomValidationException;
 import com.user_service.exception.DuplicateUsernameException;
 import com.user_service.payload.request.LoginRequestDTO;
@@ -66,13 +67,17 @@ public class AuthController {
             ),
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Register new user successfully!"
-                    ),
+                            responseCode = "201",
+                            description = "Register new user successfully!",
+                            content = @Content(
+                                    schema = @Schema(implementation = RegisterResponseDTO.class)
+                    )),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "User information error!"
-                    )
+                            description = "User registration failed. Please check field Error and try again!",
+                            content = @Content(
+                                    schema = @Schema(implementation = CommonError.class)
+                    ))
             }
     )
     @PostMapping("/register")
@@ -97,6 +102,7 @@ public class AuthController {
 
     @Operation(
             summary = "Login using username and password",
+            description = "Paste the token you received after logging in into the Authorize Button on the top.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Username and Password: cannot be blank!",
                     required = true,
@@ -113,8 +119,16 @@ public class AuthController {
                             )),
                     @ApiResponse(
                             responseCode = "401",
-                            description = "Unauthenticated!"
-                    )
+                            description = "Unauthenticated!",
+                            content = @Content(
+                            schema = @Schema(implementation = CommonError.class)
+                    )),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Login failed! Please check field Error and try again!",
+                            content = @Content(
+                                    schema = @Schema(implementation = CommonError.class)
+                            ))
             }
     )
     @PostMapping("/login")
@@ -154,11 +168,11 @@ public class AuthController {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "401",
                             description = "Invalid token.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponseDTO.class)
+                                    schema = @Schema(implementation = CommonError.class)
                             )
                     )
             }
@@ -173,7 +187,7 @@ public class AuthController {
         } else {
             return new ResponseEntity<>(
                     new CommonResponseDTO(false, messageSrc.getMessage("Error.invalid.token"), null),
-                    HttpStatus.BAD_REQUEST
+                    HttpStatus.UNAUTHORIZED
             );
         }
     }
