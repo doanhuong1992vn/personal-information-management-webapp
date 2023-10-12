@@ -1,7 +1,13 @@
-# liquibase-demo
-# First, to run the program, make sure you have Docker Desktop installed and running it
-# You can download Docker Desktop here: https://www.docker.com/products/docker-desktop/
-# Then perform the following steps:
+# Personal Information Management Webapp
+## Technologies used:
+- Docker
+- Liquibase, PostgreSQL
+- Spring boot 3.0.10, Spring security
+- Vite, ReactJS
+## Introduction:
+- First, to run the program, make sure you have Docker Desktop installed and running it
+- You can download Docker Desktop here: https://www.docker.com/products/docker-desktop/
+- Then perform the following steps:
 1. Step 1: Standing at the root directory of the project, move to the environment/liquibase-demo directory by executing the command "cd user-service/src/main/resources/environment/liquibase-demo" in command-line
 2. Step 2: Executing the command "docker compose up -d" in command-line
 3. Step 3: Access to "http://localhost:5050" in your browser and login to Pgadmin4 by email "huong.d@webglsoft.com" and password "123"
