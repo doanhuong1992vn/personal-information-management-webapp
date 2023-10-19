@@ -2,7 +2,8 @@
 ## Technologies used:
 - Docker
 - Liquibase, PostgreSQL
-- Spring boot 3.0.10, Spring security
+- Unit Test
+- Spring security for Spring boot 3.0.10
 - Vite, ReactJS
 ## Introduction:
 - First, to run the program, make sure you have Docker Desktop installed and running it
